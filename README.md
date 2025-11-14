@@ -50,3 +50,33 @@ To distribute: sign with your Apple Developer ID and submit for notarization bef
 
 - Distributed under the MIT License; see `LICENSE`.
 - Includes and adapts code from Piotr Machowski’s Xiaomi Cloud Tokens Extractor (MIT).
+
+
+## Disclaimer
+
+This software is provided "as is" without any express or implied warranties, 
+including but not limited to the warranties of merchantability, fitness for a 
+particular purpose, and non-infringement. In no event shall the author or 
+contributors be liable for any claim, damages, or other liability arising from, 
+out of, or in connection with the software or the use or other dealings in the 
+software.
+
+⚠️ **Hardware / Firmware Notice**
+This project interacts with physical hardware, embedded devices, 
+network services, and/or firmware components. Incorrect configuration, 
+installation, or usage may lead to device malfunction, connection issues, 
+network instability, data loss, or irreversible damage. Proceed only if you 
+fully understand the risks.
+
+⚠️ **Reverse Engineering Notice**
+This project may use or interact with undocumented, proprietary, or reverse-engineered 
+protocols (e.g., miIO, Matter implementations, BLE characteristics, 3MF internals).  
+Behavior may change at any time due to vendor updates.
+
+⚠️ **Brand Independence**
+This project is not affiliated with, associated with, or endorsed by any of the 
+mentioned manufacturers, brands, or companies (including but not limited to Xiaomi, 
+SmartMi, Aqara, Bambu Lab, Synology, Matter, ESP32, or Deutsche Bahn).
+All trademarks and product names belong to their respective owners.
+
+Use entirely at your own risk.
