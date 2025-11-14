@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "token-extractor-gui"
+version = "0.1.0"
+description = "Desktop GUI for extracting Xiaomi Cloud device tokens."
+requires-python = ">=3.10"
+authors = [{ name = "Martin Lihs" }]
+dependencies = [
+    "requests",
+    "pycryptodome",
+    "charset-normalizer",
+    "Pillow",
+    "colorama",
+    "PySide6"
+]
+
+[project.scripts]
+token-extractor-gui = "token_extractor_gui.app:run"
+
+
+
+
+

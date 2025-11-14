@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+src/token_extractor_gui/__init__.py
+src/token_extractor_gui/__main__.py
+src/token_extractor_gui/app.py
+src/token_extractor_gui/bridge.py
+src/token_extractor_gui/service.py
+src/token_extractor_gui.egg-info/PKG-INFO
+src/token_extractor_gui.egg-info/SOURCES.txt
+src/token_extractor_gui.egg-info/dependency_links.txt
+src/token_extractor_gui.egg-info/entry_points.txt
+src/token_extractor_gui.egg-info/requires.txt
+src/token_extractor_gui.egg-info/top_level.txt
