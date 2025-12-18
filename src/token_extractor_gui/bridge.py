@@ -39,6 +39,31 @@ SERVERS = ["cn", "de", "us", "ru", "tw", "sg", "in", "i2"]
 _LOGGER = logging.getLogger("token_extractor.gui")
 
 
+def retry_on_network_error(max_retries: int = 3, initial_delay: float = 1.0, max_delay: float = 10.0):
+    """Decorator to retry network operations with exponential backoff."""
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except (requests.exceptions.ConnectionError, 
+                        requests.exceptions.Timeout,
+                        requests.exceptions.RequestException) as e:
+                    if attempt == max_retries - 1:
+                        _LOGGER.error(f"Network error after {max_retries} attempts: {e}")
+                        raise ConnectionError(
+                            f"Failed to connect to Xiaomi Cloud after {max_retries} attempts. "
+                            f"Please check your internet connection."
+                        ) from e
+                    
+                    delay = min(initial_delay * (2 ** attempt), max_delay)
+                    _LOGGER.warning(f"Network error on attempt {attempt + 1}/{max_retries}, retrying in {delay}s...")
+                    time.sleep(delay)
+            return None
+        return wrapper
+    return decorator
+
+
 @dataclass(slots=True)
 class InteractionCallbacks:
     """
@@ -98,6 +123,7 @@ class XiaomiCloudConnector:
         params = {"data": '{"did":"' + did + '","pdid":1}'}
         return self.execute_api_call_encrypted(url, params)
 
+    @retry_on_network_error(max_retries=3)
     def execute_api_call_encrypted(self, url: str, params: Dict[str, str]):
         if not self._serviceToken or not self._ssecurity or self.userId is None:
             raise RuntimeError("Not authenticated")
