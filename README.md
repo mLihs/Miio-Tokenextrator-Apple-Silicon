@@ -1,8 +1,10 @@
-# Xiaomi Cloud Token Extractor for macOS
+# Xiaomi Cloud Token Extractor
 
-A powerful desktop GUI application for extracting Xiaomi Cloud device tokens without command-line complexity. Built for macOS with Apple Silicon support.
+A powerful cross-platform desktop GUI application for extracting Xiaomi Cloud device tokens without command-line complexity. Built with Python and Qt for maximum compatibility.
 
-![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-000000?style=flat&logo=apple)
+![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon%20%7C%20Intel-000000?style=flat&logo=apple)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat&logo=windows)
+![Linux](https://img.shields.io/badge/Linux-Ubuntu%20%7C%20Debian-E95420?style=flat&logo=linux)
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
@@ -44,12 +46,24 @@ A powerful desktop GUI application for extracting Xiaomi Cloud device tokens wit
 ## 🚀 Quick Start
 
 ### Download & Run (Easiest)
-1. Download the latest `XiaomiTokenExtractor.app` from releases
-2. Right-click the app and select **"Open"** (first time only - macOS security)
-3. Grant permission when prompted
-4. Start extracting tokens!
 
-### Build from Source
+**macOS:**
+1. Download `XiaomiTokenExtractor-macOS.zip` from releases
+2. Extract and right-click the app → **"Open"** (first time only - bypasses Gatekeeper)
+3. Start extracting tokens!
+
+**Windows:**
+1. Download `XiaomiTokenExtractor-Windows.zip` from releases
+2. Extract the folder anywhere
+3. Run `XiaomiTokenExtractor.exe`
+
+**Linux:**
+1. Download `XiaomiTokenExtractor-Linux.tar.gz` from releases
+2. Extract: `tar -xzf XiaomiTokenExtractor-Linux.tar.gz`
+3. Make executable: `chmod +x XiaomiTokenExtractor`
+4. Run: `./XiaomiTokenExtractor`
+
+### Run from Source (All Platforms)
 
 ```bash
 # Clone repository
@@ -58,19 +72,106 @@ cd Mac-Silicon-Miio-Tokenextrator
 
 # Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate
+
+# Activate virtual environment
+source .venv/bin/activate      # macOS/Linux
+# or
+.venv\Scripts\activate         # Windows
 
 # Install dependencies
 pip install .
 
-# Run directly
+# Run application
 python -m token_extractor_gui
+```
 
-# Or build the app
+## 💻 Platform Support
+
+| Platform | Status | Architecture | Download Format | Notes |
+|----------|--------|--------------|-----------------|-------|
+| **macOS** | ✅ Tested | Apple Silicon + Intel | `.zip` (contains `.app`) | M1/M2/M3 + Intel Macs |
+| **Windows** | ⚠️ CI Built | x64 | `.zip` (contains `.exe` + files) | Windows 10/11 |
+| **Linux** | ⚠️ CI Built | x64 | `.tar.gz` (single binary) | Ubuntu 20.04+ / Debian 11+ |
+
+**Legend:**
+- ✅ **Tested** - Verified working on actual hardware
+- ⚠️ **CI Built** - Auto-built by GitHub Actions, community testing welcome
+
+### Platform-Specific Notes
+
+#### macOS
+- **First launch**: Right-click → "Open" (bypasses Gatekeeper warning)
+- **Quarantine removal**: `xattr -cr /path/to/XiaomiTokenExtractor.app`
+- **Tested on**: macOS 15.1 (Sequoia) with Apple Silicon
+- **Works on**: macOS 11.0+ (Big Sur and later)
+
+#### Windows
+- **Antivirus warnings**: May flag as unknown app - add exception if needed
+- **No installation**: Just extract and run the .exe
+- **Dependencies**: All bundled, no extra software needed
+- **Compatibility**: Windows 10 (1809+) and Windows 11
+
+#### Linux
+- **System dependencies** (install if needed):
+  ```bash
+  sudo apt-get install libxcb-xinerama0 libxcb-cursor0
+  ```
+- **Tested distros**: Ubuntu 20.04+, Debian 11+ (should work on others)
+- **Wayland**: Works, but X11 recommended for best compatibility
+
+### Building from Source (Platform-Specific)
+
+**macOS:**
+```bash
 pip install pyinstaller
 pyinstaller XiaomiTokenExtractor.spec
 open dist/XiaomiTokenExtractor.app
 ```
+
+**Windows:**
+```bash
+pip install pyinstaller
+pyinstaller XiaomiTokenExtractor-Windows.spec
+dist\XiaomiTokenExtractor\XiaomiTokenExtractor.exe
+```
+
+**Linux:**
+```bash
+pip install pyinstaller
+pyinstaller --onefile --windowed \
+  --name "XiaomiTokenExtractor" \
+  --icon Xiaomi-cloud-tokens-extractor/icon.ico \
+  src/token_extractor_gui/app.py
+./dist/XiaomiTokenExtractor
+```
+
+## 🤖 Automated Builds (GitHub Actions)
+
+This project uses **GitHub Actions** to automatically build for all platforms:
+- **Triggers**: Git tags (`v*`), main branch commits, pull requests, manual dispatch
+- **Platforms**: macOS (Apple Silicon), Windows (x64), Linux (x64)
+- **Artifacts**: Available for 30 days after each build
+- **Releases**: Auto-created for version tags with downloadable binaries
+
+### Creating a Release
+
+```bash
+# Tag a new version
+git tag -a v2.0.0 -m "Release v2.0.0: Cross-platform support"
+git push origin v2.0.0
+
+# GitHub Actions will automatically:
+# 1. Build for macOS, Windows, Linux
+# 2. Create GitHub Release
+# 3. Attach all platform binaries
+```
+
+### Download CI Builds
+
+1. Go to **Actions** tab in GitHub
+2. Click on latest workflow run
+3. Scroll to **Artifacts** section
+4. Download for your platform
 
 ## 📖 How to Use
 
@@ -163,37 +264,81 @@ homes:
 
 ## 📝 Requirements
 
-- **macOS**: 11.0+ (Big Sur or later)
-- **Architecture**: Apple Silicon (M1/M2/M3) or Intel
-- **Python**: 3.10+ (for building from source)
+### Pre-built Binaries
+- **macOS**: 11.0+ (Big Sur or later), Apple Silicon or Intel
+- **Windows**: 10 (1809+) or 11, 64-bit
+- **Linux**: Ubuntu 20.04+ / Debian 11+ or equivalent, 64-bit
 - **Network**: Active internet connection
+
+### Building from Source
+- **Python**: 3.10 or later
+- **pip**: Latest version recommended
+- **Platform**: Any OS that supports Python and Qt (macOS, Windows, Linux, *BSD)
 
 ## 🐛 Troubleshooting
 
-### App won't open (prohibition icon)
+### Platform-Specific Issues
+
+#### macOS: App won't open (prohibition icon ⃠)
 ```bash
-# Remove quarantine flag
+# Option 1: Remove quarantine flag
 xattr -cr /path/to/XiaomiTokenExtractor.app
 
-# Or right-click → Open (first time only)
+# Option 2: Right-click → Open (first time only)
 ```
 
-### Connection fails
+#### Windows: "Windows protected your PC" warning
+1. Click **"More info"**
+2. Click **"Run anyway"**
+3. Or add exception in Windows Defender
+
+#### Windows: Antivirus flags the app
+- **Why**: Unsigned executable from PyInstaller
+- **Solution**: Add exception for `XiaomiTokenExtractor.exe`
+- **Safe?**: Yes, verify source code or build yourself
+
+#### Linux: Missing libraries error
+```bash
+# Install required libraries
+sudo apt-get update
+sudo apt-get install libxcb-xinerama0 libxcb-cursor0
+
+# For other distros, install equivalent Qt/xcb packages
+```
+
+#### Linux: App won't start on Wayland
+```bash
+# Force X11 mode
+QT_QPA_PLATFORM=xcb ./XiaomiTokenExtractor
+```
+
+### General Issues
+
+#### Connection fails
 - ✅ Check internet connection
 - ✅ Try different server region
 - ✅ Disable VPN temporarily
 - ✅ Check firewall settings
+- ✅ Ensure port 443 (HTTPS) is not blocked
 
-### Authentication fails
-- ✅ Verify credentials (not Roborock account!)
+#### Authentication fails
+- ✅ Verify credentials (Xiaomi account, not Roborock!)
 - ✅ Use QR code login instead
 - ✅ Check spam folder for 2FA emails
-- ✅ Wait if hitting rate limits (3-5 requests/day limit)
+- ✅ Wait if hitting rate limits (3-5 requests/day)
+- ✅ Try browser login first to verify account works
 
-### No devices found
+#### No devices found
 - ✅ Try "All regions" instead of specific server
-- ✅ Verify devices are in Xiaomi Home app
-- ✅ Check BLE checkbox for Bluetooth devices
+- ✅ Verify devices appear in Xiaomi Home app
+- ✅ Enable BLE checkbox for Bluetooth devices
+- ✅ Wait 30-60 seconds for all regions to load
+
+#### App crashes or freezes
+- ✅ Check log viewer for error messages
+- ✅ Try restarting the app
+- ✅ Update to latest version
+- ✅ Report issue with log output on GitHub
 
 ## 🏗️ Built With
 

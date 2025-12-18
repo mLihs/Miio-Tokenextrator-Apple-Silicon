@@ -1,0 +1,160 @@
+name: Build Cross-Platform
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    name: Build macOS (Apple Silicon)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pyinstaller
+
+      - name: Build macOS app
+        run: |
+          pyinstaller XiaomiTokenExtractor.spec
+          
+      - name: Create ZIP for artifact
+        run: |
+          cd dist
+          zip -r XiaomiTokenExtractor-macOS.zip XiaomiTokenExtractor.app
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XiaomiTokenExtractor-macOS-AppleSilicon
+          path: dist/XiaomiTokenExtractor-macOS.zip
+          retention-days: 30
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pyinstaller
+
+      - name: Build Windows app
+        run: |
+          pyinstaller XiaomiTokenExtractor-Windows.spec
+
+      - name: Create ZIP for artifact
+        run: |
+          cd dist
+          Compress-Archive -Path XiaomiTokenExtractor -DestinationPath XiaomiTokenExtractor-Windows.zip
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XiaomiTokenExtractor-Windows
+          path: dist/XiaomiTokenExtractor-Windows.zip
+          retention-days: 30
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxcb-xinerama0 libxcb-cursor0
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pyinstaller
+
+      - name: Build Linux app
+        run: |
+          pyinstaller --onefile --windowed \
+            --name "XiaomiTokenExtractor" \
+            --icon Xiaomi-cloud-tokens-extractor/icon.ico \
+            --add-data "Xiaomi-cloud-tokens-extractor/icon.ico:." \
+            --hidden-import PySide6.QtCore \
+            --hidden-import PySide6.QtGui \
+            --hidden-import PySide6.QtWidgets \
+            --hidden-import PySide6.QtNetwork \
+            src/token_extractor_gui/app.py
+
+      - name: Make executable
+        run: chmod +x dist/XiaomiTokenExtractor
+
+      - name: Create archive
+        run: |
+          cd dist
+          tar -czf XiaomiTokenExtractor-Linux.tar.gz XiaomiTokenExtractor
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: XiaomiTokenExtractor-Linux
+          path: dist/XiaomiTokenExtractor-Linux.tar.gz
+          retention-days: 30
+
+  create-release:
+    name: Create Release
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            XiaomiTokenExtractor-macOS-AppleSilicon/XiaomiTokenExtractor-macOS.zip
+            XiaomiTokenExtractor-Windows/XiaomiTokenExtractor-Windows.zip
+            XiaomiTokenExtractor-Linux/XiaomiTokenExtractor-Linux.tar.gz
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
