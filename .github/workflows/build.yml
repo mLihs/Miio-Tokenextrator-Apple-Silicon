@@ -110,7 +110,7 @@ jobs:
           pip install .
           pip install pyinstaller
 
-            - name: Build Linux app
+      - name: Build Linux app
         run: |
           rm -rf dist build
           pyinstaller --onefile --windowed \
